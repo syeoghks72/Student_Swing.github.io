@@ -21,7 +21,7 @@ import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
 
 public class Student extends JPanel {
-	static Connection conn;
+	static Connection conn;	//
 	static Statement stmt;
 	static ResultSet rs;
 
@@ -54,7 +54,8 @@ public class Student extends JPanel {
 		searchBtn.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				String whereString="where";
+				String whereString="";
+				
 				if(idTxt.getText()!="") {
 					whereString += "id='" + idTxt.getText() + "' ";
 				}
@@ -74,27 +75,24 @@ public class Student extends JPanel {
 					whereString += "address='" + addressTxt.getText() + "' ";
 				}
 				
-				System.out.println(whereString);
-				
 				try {
 					// statement按眉 积己
-					stmt = conn.createStatement();
-					
-					//String whereString = 
+					stmt = conn.createStatement(); 
 
 					// 孽府 角青
-//					rs = stmt.executeQuery("select * from student where id = '" + idTxt.getText() + "'");
-//					System.out.print("select * from student where id = '" + idTxt.getText() + "' ");
-//					rs = stmt.executeQuery("select * from student where " + whereString);
+					
+					if(whereString!="") {
+						rs = stmt.executeQuery("select * from student where " + whereString);
+						System.out.print("select * from student where " + whereString);
+						while (rs.next()) {
+							
+							nameTxt.setText(rs.getString("name"));
+							deptTxt.setText(rs.getString("dept"));
 
-//					while (rs.next()) {
-//						
-//						nameTxt.setText(rs.getString("name"));
-//						deptTxt.setText(rs.getString("dept"));
-//
-//					}
-//					rs = stmt.executeQuery("select * from student where id = '" + idTxt.getText() + "'");
-//					setTable(rs);
+						}
+						rs = stmt.executeQuery("select * from student where id = '" + idTxt.getText() + "'");
+						setTable(rs);
+					}
 
 				} catch (Exception e1) {
 					System.out.println(e1);
