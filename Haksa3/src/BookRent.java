@@ -12,7 +12,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
-public class BookRent extends JPanel {
+public class BookRent extends JPanel{
 
 	JComboBox cb = null;
 	JTable table = null;

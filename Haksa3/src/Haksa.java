@@ -40,7 +40,6 @@ public class Haksa extends JFrame {
 		menu2.add(book_rent_item);
 
 		book_rent_item.addActionListener(new ActionListener() {
-
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				panel.removeAll(); // 모든컴포넌트 삭제

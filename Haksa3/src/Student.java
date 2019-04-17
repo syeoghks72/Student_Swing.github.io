@@ -24,7 +24,7 @@ public class Student extends JPanel {
 	static Connection conn;	//
 	static Statement stmt;
 	static ResultSet rs;
-
+	Statement statement = null;
 	JButton listBtn = null;
 	JButton insertBtn = null;
 	JButton modifiedBtn = null;
@@ -39,7 +39,6 @@ public class Student extends JPanel {
 	DefaultTableModel model = null;
 
 	public Student() {
-
 		setLayout(new FlowLayout());
 
 		add(new JLabel("학번"));
@@ -56,41 +55,35 @@ public class Student extends JPanel {
 			public void actionPerformed(ActionEvent e) {
 				String whereString="";
 				
-				if(idTxt.getText()!="") {
+				if(!idTxt.getText().equals("")) {
 					whereString += "id='" + idTxt.getText() + "' ";
 				}
 				
-				if(nameTxt.getText()!="") {
-					if(whereString!="") whereString+="AND ";
+				if(!nameTxt.getText().equals("")) {
+					if(!whereString.equals("")) whereString+="AND ";
 					whereString += "name='" + nameTxt.getText() + "' ";
 				}
 				
-				if(deptTxt.getText()!="") {
-					if(whereString!="") whereString+="AND ";
+				if(!deptTxt.getText().equals("")) {
+					if(!whereString.equals("")) whereString+="AND ";
 					whereString += "dept='" + deptTxt.getText() + "' ";
 				}
 				
-				if(addressTxt.getText()!="") {
-					if(whereString!="") whereString+="AND ";
+				if(!addressTxt.getText().equals("")) {
+					if(!whereString.equals("")) whereString+="AND ";
 					whereString += "address='" + addressTxt.getText() + "' ";
 				}
 				
 				try {
+					Class.forName("oracle.jdbc.driver.OracleDriver");
+					conn = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:orcl", "ora_user", "hong");
 					// statement객체 생성
-					stmt = conn.createStatement(); 
-
-					// 쿼리 실행
+					stmt = conn.createStatement();
 					
-					if(whereString!="") {
+					// 쿼리 실행
+					if(!whereString.equals("")) {						
+						System.out.println("select * from student where " + whereString);
 						rs = stmt.executeQuery("select * from student where " + whereString);
-						System.out.print("select * from student where " + whereString);
-						while (rs.next()) {
-							
-							nameTxt.setText(rs.getString("name"));
-							deptTxt.setText(rs.getString("dept"));
-
-						}
-						rs = stmt.executeQuery("select * from student where id = '" + idTxt.getText() + "'");
 						setTable(rs);
 					}
 
@@ -145,20 +138,8 @@ public class Student extends JPanel {
 
 					// statement객체 생성
 					stmt = conn.createStatement();
-
-					// insert
-					// stmt.executeUpdate("insert into student values('lyg', '이율곡', '컴퓨터시스템')");
-
-					// update
-					// stmt.executeUpdate("update student set name='하하' where id='lyg'");
-
-					// delete
-					// int result = stmt.executeUpdate("delete from student where id=5");
-//					if(result != 1) {
-//						System.out.println("데이터가 삭제되지 않았습니다.");
-//					}
-					// 쿼리 실행
 					rs = stmt.executeQuery("select * from student order by id");
+					System.out.println("select * from student order by id");
 					setTable(rs);
 
 				} catch (Exception e1) {
@@ -182,7 +163,9 @@ public class Student extends JPanel {
 				}
 			}
 		});
+		
 		add(listBtn);
+		
 		insertBtn = new JButton("등록");
 		add(insertBtn);
 
@@ -204,6 +187,7 @@ public class Student extends JPanel {
 							+ "', '" + deptTxt.getText() +  "', '" + addressTxt.getText() + "')");
 					// 쿼리 실행
 					rs = stmt.executeQuery("select * from student order by id");
+					System.out.println("select * from student order by id");
 					setTable(rs);
 				} catch (Exception e1) {
 					System.out.println(e1);
@@ -241,14 +225,15 @@ public class Student extends JPanel {
 					stmt = conn.createStatement();
 					
 					// update.. 수정
-					stmt.executeUpdate(
-							"update student set name='" + nameTxt.getText() +"' , dept='" + deptTxt.getText() +"' , address='"+ addressTxt.getText() +"' where id='" + idTxt.getText() + "'");
+					stmt.executeUpdate("update student set name='" + nameTxt.getText() +"' , dept='" + deptTxt.getText() +"' , address='"+ addressTxt.getText() +"' where id='" + idTxt.getText() + "'");
 					System.out.println("update student set name='" + nameTxt.getText() +"' , dept='" + deptTxt.getText() +"' , address='"+ addressTxt.getText() +"' where id='" + idTxt.getText() + "'");
 					
 					rs = stmt.executeQuery("select * from student where id = '" + idTxt.getText() + "'");
+					System.out.println("select * from student where id = '" + idTxt.getText() + "'");
 
 					// 쿼리 실행
 					rs = stmt.executeQuery("select * from student order by id");
+					System.out.println("select * from student order by id");
 					setTable(rs);
 
 				} catch (Exception e1) {
@@ -296,6 +281,7 @@ public class Student extends JPanel {
 
 						// 쿼리 실행
 						rs = stmt.executeQuery("select * from student order by id");
+						System.out.println("select * from student order by id");
 						setTable(rs);
 					} else {
 
