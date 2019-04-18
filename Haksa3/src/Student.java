@@ -21,9 +21,7 @@ import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
 
 public class Student extends JPanel {
-	static Connection conn;	//
-	static Statement stmt;
-	static ResultSet rs;
+	
 	Statement statement = null;
 	JButton listBtn = null;
 	JButton insertBtn = null;
@@ -74,38 +72,43 @@ public class Student extends JPanel {
 					whereString += "address='" + addressTxt.getText() + "' ";
 				}
 				
-				try {
-					Class.forName("oracle.jdbc.driver.OracleDriver");
-					conn = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:orcl", "ora_user", "hong");
-					// statement객체 생성
-					stmt = conn.createStatement();
-					
-					// 쿼리 실행
-					if(!whereString.equals("")) {						
-						System.out.println("select * from student where " + whereString);
-						rs = stmt.executeQuery("select * from student where " + whereString);
-						setTable(rs);
-					}
-
-				} catch (Exception e1) {
-					System.out.println(e1);
-				} finally {
-					if (rs != null) {
-						try {
-							rs.close();
-						} catch (SQLException e2) {
-							e2.printStackTrace();
-						}
-
-					}
-					if (conn != null) {
-						try {
-							conn.close();
-						} catch (SQLException e3) {
-							e3.printStackTrace();
-						}
-					}
+				if(!whereString.equals("")) {
+					setTable(JdbcConnect.executeQuery("select * from student where " + whereString));
 				}
+				
+				//주석 삭제 보류......
+//				try {
+//					Class.forName("oracle.jdbc.driver.OracleDriver");
+//					conn = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:orcl", "ora_user", "hong");
+//					// statement객체 생성
+//					stmt = conn.createStatement();
+//					
+//					// 쿼리 실행
+//					if(!whereString.equals("")) {						
+//						System.out.println("select * from student where " + whereString);
+//						rs = stmt.executeQuery("select * from student where " + whereString);
+//						setTable(rs);
+//					}
+//
+//				} catch (Exception e1) {
+//					System.out.println(e1);
+//				} finally {
+//					if (rs != null) {
+//						try {
+//							rs.close();
+//						} catch (SQLException e2) {
+//							e2.printStackTrace();
+//						}
+//
+//					}
+//					if (conn != null) {
+//						try {
+//							conn.close();
+//						} catch (SQLException e3) {
+//							e3.printStackTrace();
+//						}
+//					}
+//				}
 			}
 		});
 
@@ -132,35 +135,38 @@ public class Student extends JPanel {
 		listBtn.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				try {
-					Class.forName("oracle.jdbc.driver.OracleDriver");
-					conn = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:orcl", "ora_user", "hong");
-
-					// statement객체 생성
-					stmt = conn.createStatement();
-					rs = stmt.executeQuery("select * from student order by id");
-					System.out.println("select * from student order by id");
-					setTable(rs);
-
-				} catch (Exception e1) {
-					System.out.println(e1);
-				} finally {
-					if (rs != null) {
-						try {
-							rs.close();
-						} catch (SQLException e2) {
-							e2.printStackTrace();
-						}
-
-					}
-					if (conn != null) {
-						try {
-							conn.close();
-						} catch (SQLException e3) {
-							e3.printStackTrace();
-						}
-					}
-				}
+				setTable(JdbcConnect.executeQuery("select * from student order by id"));
+				
+				//////////////////주석 삭제 보류
+//				try {
+//					Class.forName("oracle.jdbc.driver.OracleDriver");
+//					conn = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:orcl", "ora_user", "hong");
+//
+//					// statement객체 생성
+//					stmt = conn.createStatement();
+//					rs = stmt.executeQuery("select * from student order by id");
+//					System.out.println("select * from student order by id");
+//					setTable(rs);
+//
+//				} catch (Exception e1) {
+//					System.out.println(e1);
+//				} finally {
+//					if (rs != null) {
+//						try {
+//							rs.close();
+//						} catch (SQLException e2) {
+//							e2.printStackTrace();
+//						}
+//
+//					}
+//					if (conn != null) {
+//						try {
+//							conn.close();
+//						} catch (SQLException e3) {
+//							e3.printStackTrace();
+//						}
+//					}
+//				}
 			}
 		});
 		
@@ -172,42 +178,50 @@ public class Student extends JPanel {
 		insertBtn.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				try {
-					Class.forName("oracle.jdbc.driver.OracleDriver");
-					conn = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:orcl", "ora_user", "hong");
-
-					// statement객체 생성
-					stmt = conn.createStatement();
-
-					// insert
-					stmt.executeUpdate("insert into student values('" + idTxt.getText() + "', '" + nameTxt.getText()
-							+ "', '" + deptTxt.getText() +"', '"+ addressTxt.getText()+ "')");
-					
-					System.out.println("insert into student values('" + idTxt.getText() + "', '" + nameTxt.getText()
-							+ "', '" + deptTxt.getText() +  "', '" + addressTxt.getText() + "')");
-					// 쿼리 실행
-					rs = stmt.executeQuery("select * from student order by id");
-					System.out.println("select * from student order by id");
-					setTable(rs);
-				} catch (Exception e1) {
-					System.out.println(e1);
-				} finally {
-					if (rs != null) {
-						try {
-							rs.close();
-						} catch (SQLException e2) {
-							e2.printStackTrace();
-						}
-
-					}
-					if (conn != null) {
-						try {
-							conn.close();
-						} catch (SQLException e3) {
-							e3.printStackTrace();
-						}
-					}
-				}
+				JdbcConnect.executeUpdate(
+						"insert into student values('" + idTxt.getText() + "', '" + nameTxt.getText()
+				+ "', '" + deptTxt.getText() +"', '"+ addressTxt.getText()+ "')");
+				
+				setTable(JdbcConnect.executeQuery("select * from student order by id"));
+				
+				
+										/* 주석처리 보류*/
+//				try {
+//					Class.forName("oracle.jdbc.driver.OracleDriver");
+//					conn = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:orcl", "ora_user", "hong");
+//
+//					// statement객체 생성
+//					stmt = conn.createStatement();
+//
+//					// insert
+//					stmt.executeUpdate("insert into student values('" + idTxt.getText() + "', '" + nameTxt.getText()
+//							+ "', '" + deptTxt.getText() +"', '"+ addressTxt.getText()+ "')");
+//					
+//					System.out.println("insert into student values('" + idTxt.getText() + "', '" + nameTxt.getText()
+//							+ "', '" + deptTxt.getText() +  "', '" + addressTxt.getText() + "')");
+//					// 쿼리 실행
+//					rs = stmt.executeQuery("select * from student order by id");
+//					System.out.println("select * from student order by id");
+//					setTable(rs);
+//				} catch (Exception e1) {
+//					System.out.println(e1);
+//				} finally {
+//					if (rs != null) {
+//						try {
+//							rs.close();
+//						} catch (SQLException e2) {
+//							e2.printStackTrace();
+//						}
+//
+//					}
+//					if (conn != null) {
+//						try {
+//							conn.close();
+//						} catch (SQLException e3) {
+//							e3.printStackTrace();
+//						}
+//					}
+//				}
 			}
 		});
 
@@ -217,44 +231,49 @@ public class Student extends JPanel {
 		modifiedBtn.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				try {
-					Class.forName("oracle.jdbc.driver.OracleDriver");
-					conn = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:orcl", "ora_user", "hong");
-
-					// statement객체 생성
-					stmt = conn.createStatement();
-					
-					// update.. 수정
-					stmt.executeUpdate("update student set name='" + nameTxt.getText() +"' , dept='" + deptTxt.getText() +"' , address='"+ addressTxt.getText() +"' where id='" + idTxt.getText() + "'");
-					System.out.println("update student set name='" + nameTxt.getText() +"' , dept='" + deptTxt.getText() +"' , address='"+ addressTxt.getText() +"' where id='" + idTxt.getText() + "'");
-					
-					rs = stmt.executeQuery("select * from student where id = '" + idTxt.getText() + "'");
-					System.out.println("select * from student where id = '" + idTxt.getText() + "'");
-
-					// 쿼리 실행
-					rs = stmt.executeQuery("select * from student order by id");
-					System.out.println("select * from student order by id");
-					setTable(rs);
-
-				} catch (Exception e1) {
-					System.out.println(e1);
-				} finally {
-					if (rs != null) {
-						try {
-							rs.close();
-						} catch (SQLException e2) {
-							e2.printStackTrace();
-						}
-
-					}
-					if (conn != null) {
-						try {
-							conn.close();
-						} catch (SQLException e3) {
-							e3.printStackTrace();
-						}
-					}
-				}
+				
+				JdbcConnect.executeUpdate("update student set name='" + nameTxt.getText() +"' , dept='" + deptTxt.getText() +"' , address='"+ addressTxt.getText() +"' where id='" + idTxt.getText() + "'");
+				setTable(JdbcConnect.executeQuery("select * from student order by id"));
+				
+				////////////////////주석삭제 보류////////////////////////////////
+//				try {
+//					Class.forName("oracle.jdbc.driver.OracleDriver");
+//					conn = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:orcl", "ora_user", "hong");
+//
+//					// statement객체 생성
+//					stmt = conn.createStatement();
+//					
+//					// update.. 수정
+//					stmt.executeUpdate("update student set name='" + nameTxt.getText() +"' , dept='" + deptTxt.getText() +"' , address='"+ addressTxt.getText() +"' where id='" + idTxt.getText() + "'");
+//					System.out.println("update student set name='" + nameTxt.getText() +"' , dept='" + deptTxt.getText() +"' , address='"+ addressTxt.getText() +"' where id='" + idTxt.getText() + "'");
+//					
+//					rs = stmt.executeQuery("select * from student where id = '" + idTxt.getText() + "'");
+//					System.out.println("select * from student where id = '" + idTxt.getText() + "'");
+//
+//					// 쿼리 실행
+//					rs = stmt.executeQuery("select * from student order by id");
+//					System.out.println("select * from student order by id");
+//					setTable(rs);
+//
+//				} catch (Exception e1) {
+//					System.out.println(e1);
+//				} finally {
+//					if (rs != null) {
+//						try {
+//							rs.close();
+//						} catch (SQLException e2) {
+//							e2.printStackTrace();
+//						}
+//
+//					}
+//					if (conn != null) {
+//						try {
+//							conn.close();
+//						} catch (SQLException e3) {
+//							e3.printStackTrace();
+//						}
+//					}
+//				}
 
 			}
 		});
@@ -265,46 +284,59 @@ public class Student extends JPanel {
 		deleteBtn.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				try {
-					int result = JOptionPane.showConfirmDialog(null, "삭제하시겠습니까?", "Confirm", JOptionPane.YES_NO_OPTION);
-					Class.forName("oracle.jdbc.driver.OracleDriver");
-					conn = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:orcl", "ora_user", "hong");
+				int result = JOptionPane.showConfirmDialog(null, "삭제하시겠습니까?", "Confirm", JOptionPane.YES_NO_OPTION);
+				
+				if (result == JOptionPane.CLOSED_OPTION) {
 
-					// statement객체 생성
-					stmt = conn.createStatement();
+				} else if (result == JOptionPane.YES_OPTION) {
+					JdbcConnect.executeUpdate("delete from student where id='" + idTxt.getText() + "'");
+					setTable(JdbcConnect.executeQuery("select * from student order by id"));
+					
+				} else {
 
-					if (result == JOptionPane.CLOSED_OPTION) {
-
-					} else if (result == JOptionPane.YES_OPTION) {
-						// delete
-						stmt.executeUpdate("delete from student where id='" + idTxt.getText() + "'");
-
-						// 쿼리 실행
-						rs = stmt.executeQuery("select * from student order by id");
-						System.out.println("select * from student order by id");
-						setTable(rs);
-					} else {
-
-					}
-				} catch (Exception e1) {
-					System.out.println(e1);
-				} finally {
-					if (rs != null) {
-						try {
-							rs.close();
-						} catch (SQLException e2) {
-							e2.printStackTrace();
-						}
-
-					}
-					if (conn != null) {
-						try {
-							conn.close();
-						} catch (SQLException e3) {
-							e3.printStackTrace();
-						}
-					}
 				}
+				////////////////////////////주석 삭제 보류///////////////////////////////
+				
+//				try {
+//					int result = JOptionPane.showConfirmDialog(null, "삭제하시겠습니까?", "Confirm", JOptionPane.YES_NO_OPTION);
+//					Class.forName("oracle.jdbc.driver.OracleDriver");
+//					conn = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:orcl", "ora_user", "hong");
+//
+//					// statement객체 생성
+//					stmt = conn.createStatement();
+//
+//					if (result == JOptionPane.CLOSED_OPTION) {
+//
+//					} else if (result == JOptionPane.YES_OPTION) {
+//						// delete
+//						stmt.executeUpdate("delete from student where id='" + idTxt.getText() + "'");
+//
+//						// 쿼리 실행
+//						rs = stmt.executeQuery("select * from student order by id");
+//						System.out.println("select * from student order by id");
+//						setTable(rs);
+//					} else {
+//
+//					}
+//				} catch (Exception e1) {
+//					System.out.println(e1);
+//				} finally {
+//					if (rs != null) {
+//						try {
+//							rs.close();
+//						} catch (SQLException e2) {
+//							e2.printStackTrace();
+//						}
+//
+//					}
+//					if (conn != null) {
+//						try {
+//							conn.close();
+//						} catch (SQLException e3) {
+//							e3.printStackTrace();
+//						}
+//					}
+//				}
 
 			}
 		});

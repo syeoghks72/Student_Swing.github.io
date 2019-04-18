@@ -18,37 +18,38 @@ public class BookRent extends JPanel{
 	JTable table = null;
 	DefaultTableModel model = null;
 	String query = null;
-	Statement stmt = null;
-	Connection conn = null;
+//	Statement stmt = null;
+//	Connection conn = null;
 
 	public BookRent() {
-		ResultSet rs = null; // select한 결과를 저장하는 객체
-
-		String url = null; // 서버 url
-		/* oracle */
-		String uid = "ora_user"; // ID
-		String pw = "hong"; // PW
-		url = "jdbc:oracle:thin:@localhost:1521:orcl";
-
-		// 전체. 기본쿼리
+		
+//		ResultSet rs = null; // select한 결과를 저장하는 객체
+//
+//		String url = null; // 서버 url
+//		/* oracle */
+//		String uid = "ora_user"; // ID
+//		String pw = "hong"; // PW
+//		url = "jdbc:oracle:thin:@localhost:1521:orcl";
+//
+//		// 전체. 기본쿼리
 		query = "select s.id, s.name, b.title, br.rDate" + " from student s, books b, bookRent br" + " where br.id=s.id"
 				+ " and br.bookNo=b.no order by br.no";
 
-		// String uid = "root";// ID
-		// String pw = "1234";//PW
-		// url="jdbc:mysql://localhost:3306/sampledb?useSSL=false";
-
-		// DB Connection
-		try {
-			/* oracle */
-			Class.forName("oracle.jdbc.driver.OracleDriver");// jdbc driver load
-
-			// Class.forName("com.mysql.jdbc.Driver");
-			conn = DriverManager.getConnection(url, uid, pw);// 연결
-			stmt = conn.createStatement();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+//		// String uid = "root";// ID
+//		// String pw = "1234";//PW
+//		// url="jdbc:mysql://localhost:3306/sampledb?useSSL=false";
+//
+//		// DB Connection
+//		try {
+//			/* oracle */
+//			Class.forName("oracle.jdbc.driver.OracleDriver");// jdbc driver load
+//
+//			// Class.forName("com.mysql.jdbc.Driver");
+//			conn = DriverManager.getConnection(url, uid, pw);// 연결
+//			stmt = conn.createStatement();
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}
 
 		// JComboBox
 		String[] dept = { "전체", "컴퓨터시스템", "멀티미디어", "컴퓨터공학" };
@@ -79,7 +80,7 @@ public class BookRent extends JPanel{
 					// 컴퓨터공학
 					query += " and s.dept='컴퓨터공학'" + " order by br.no";
 				}
-				list();
+				//list();
 			}
 		});
 
@@ -105,36 +106,29 @@ public class BookRent extends JPanel{
 //	        }
 //	       });
 		// 전체 목록 출력
-		list();
+		//list();
+		System.out.println(query);
+		//setTable(JdbcConnect.executeQuery(query));
 
 		this.setLayout(null);
 		this.setSize(500, 500);
 		this.setVisible(true);
 	}
-
-	public void list() {
+	
+	public void setTable(ResultSet rs) {
 		try {
-			// System.out.println("연결되었습니다.....");
-			// System.out.println(query);
-			// Select문 실행
-			ResultSet rs = stmt.executeQuery(query);
-
 			// JTable 초기화
-			model.setNumRows(0);
-
+			model.setNumRows(0); // model에서 행의 수를 0으로 설정
 			while (rs.next()) {
-				String[] row = new String[4];// 컬럼의 갯수가 4
-				row[0] = rs.getString("id");
-				row[1] = rs.getString("name");
+				String[] row = new String[4];// 컬럼의 갯수가 3
+				row[0] = rs.getString("id");	//id는 학번
+				row[1] = rs.getString("name"); 
 				row[2] = rs.getString("title");
 				row[3] = rs.getString("rdate");
 				model.addRow(row);
 			}
-			rs.close();
-
-		} catch (Exception e1) {
-			// e.getStackTrace();
-			System.out.println(e1.getMessage());
+		} catch (Exception e) {
+			System.out.println(e);
 		}
-	}
+	}	
 }
