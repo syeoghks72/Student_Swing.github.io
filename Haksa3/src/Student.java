@@ -5,10 +5,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.sql.Statement;
 
 import javax.swing.JButton;
@@ -231,9 +228,13 @@ public class Student extends JPanel {
 		modifiedBtn.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				
-				JdbcConnect.executeUpdate("update student set name='" + nameTxt.getText() +"' , dept='" + deptTxt.getText() +"' , address='"+ addressTxt.getText() +"' where id='" + idTxt.getText() + "'");
-				setTable(JdbcConnect.executeQuery("select * from student order by id"));
+				if(!nameTxt.getText().equals("") && !deptTxt.getText().equals("") && !deptTxt.getText().equals("") && !addressTxt.getText().equals("")) {
+					JdbcConnect.executeUpdate("update student set name='" + nameTxt.getText() +"' , dept='" + deptTxt.getText() +"' , address='"+ addressTxt.getText() +"' where id='" + idTxt.getText() + "'");
+					setTable(JdbcConnect.executeQuery("select * from student order by id"));
+				}
+				else{ //수정시 빈칸이 있으면 경고 알림 띄우기
+					JOptionPane.showMessageDialog(null, "빈칸이 있습니다.", "수정할수 없습니다!", JOptionPane.ERROR_MESSAGE);
+				}
 				
 				////////////////////주석삭제 보류////////////////////////////////
 //				try {

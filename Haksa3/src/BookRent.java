@@ -5,7 +5,9 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.util.ArrayList;
 
+import javax.swing.ComboBoxModel;
 import javax.swing.JComboBox;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -13,48 +15,17 @@ import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
 public class BookRent extends JPanel{
-
 	JComboBox cb = null;
 	JTable table = null;
 	DefaultTableModel model = null;
 	String query = null;
-//	Statement stmt = null;
-//	Connection conn = null;
 
 	public BookRent() {
-		
-//		ResultSet rs = null; // select한 결과를 저장하는 객체
-//
-//		String url = null; // 서버 url
-//		/* oracle */
-//		String uid = "ora_user"; // ID
-//		String pw = "hong"; // PW
-//		url = "jdbc:oracle:thin:@localhost:1521:orcl";
-//
-//		// 전체. 기본쿼리
 		query = "select s.id, s.name, b.title, br.rDate" + " from student s, books b, bookRent br" + " where br.id=s.id"
 				+ " and br.bookNo=b.no order by br.no";
-
-//		// String uid = "root";// ID
-//		// String pw = "1234";//PW
-//		// url="jdbc:mysql://localhost:3306/sampledb?useSSL=false";
-//
-//		// DB Connection
-//		try {
-//			/* oracle */
-//			Class.forName("oracle.jdbc.driver.OracleDriver");// jdbc driver load
-//
-//			// Class.forName("com.mysql.jdbc.Driver");
-//			conn = DriverManager.getConnection(url, uid, pw);// 연결
-//			stmt = conn.createStatement();
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//		}
-
-		// JComboBox
-		String[] dept = { "전체", "컴퓨터시스템", "멀티미디어", "컴퓨터공학" };
-		cb = new JComboBox(dept);
-		cb.setBounds(45, 10, 100, 20);
+		
+		cb = new JComboBox(getDeptArry(JdbcConnect.executeQuery("select distinct dept from student")));		
+		cb.setBounds(45, 10, 120, 20);
 		add(cb);
 
 		cb.addActionListener(new ActionListener() {
@@ -80,7 +51,6 @@ public class BookRent extends JPanel{
 					// 컴퓨터공학
 					query += " and s.dept='컴퓨터공학'" + " order by br.no";
 				}
-				//list();
 			}
 		});
 
@@ -106,9 +76,8 @@ public class BookRent extends JPanel{
 //	        }
 //	       });
 		// 전체 목록 출력
-		//list();
-		System.out.println(query);
-		//setTable(JdbcConnect.executeQuery(query));
+		
+		setTable(JdbcConnect.executeQuery(query));
 
 		this.setLayout(null);
 		this.setSize(500, 500);
@@ -131,4 +100,28 @@ public class BookRent extends JPanel{
 			System.out.println(e);
 		}
 	}	
+	
+	//Dept를 정보를 매개변수로 받아 Dept정보를 String 배열로 리턴한다.
+	//dept(학과종류)를 배열로 리턴하는 함수..
+	public String[] getDeptArry(ResultSet dept_rs) {
+		String[] dept_arry = null;	//지역변수는 null로 초기화
+		ArrayList<String> dept_arryList = new ArrayList<String>();
+		int arr_index = 0;	//dept배열의 인덱스 변수
+		try {
+			dept_arry = new String[10];	//패치 사이즈 만큼 배열 크기 할당
+			System.out.println(dept_rs.getFetchSize());
+			while (dept_rs.next()) {
+				arr_index++;
+				dept_arryList.add(dept_rs.getString("dept"));
+			}
+			dept_arry = new String[arr_index];
+			arr_index = 0;
+			for(String s : dept_arryList) {
+				dept_arry[arr_index++] = s;
+			}
+		} catch (Exception e) {
+			System.out.println(e);
+		}
+		return dept_arry;
+	}
 }
